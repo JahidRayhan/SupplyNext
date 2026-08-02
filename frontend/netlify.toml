@@ -1,0 +1,11 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# VITE_API_BASE_URL is set per-site in the Netlify dashboard (Site settings ->
+# Environment variables), not here, since it's specific to your deployed
+# backend URL.

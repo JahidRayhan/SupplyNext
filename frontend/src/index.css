@@ -1,0 +1,77 @@
+:root {
+  --bg: #f2f3ef;
+  --surface: #ffffff;
+  --surface-alt: #eaece6;
+  --ink: #1b1f23;
+  --ink-muted: #5b6169;
+  --rail: #161a2c;
+  --rail-ink: #c9cedb;
+  --rail-ink-dim: #7d84a0;
+  --line: #dcded7;
+  --line-strong: #c3c6bd;
+  --amber: #e08a2b;
+  --amber-soft: #fbeedb;
+  --teal: #1f7a68;
+  --teal-soft: #e2f2ee;
+  --red: #b8402f;
+  --red-soft: #fbe8e4;
+  --radius: 3px;
+  --font-display: "Space Grotesk", "IBM Plex Sans", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+a {
+  color: inherit;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--amber-soft);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

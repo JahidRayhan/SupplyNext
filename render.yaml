@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sdcip-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # paste your Neon (or other) connection string in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true # Render generates a random secret for you
+      - key: CORS_ORIGIN
+        sync: false # set this to your deployed Netlify/Vercel URL once you have it
