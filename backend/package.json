@@ -2,7 +2,6 @@
   "name": "sdcip-backend",
   "version": "1.0.0",
   "description": "SupplyNext Digital Supply Chain Intelligence Platform - Release 1 Pilot backend (Forecasting + Inventory Analytics + Dashboard, Smart Fan line)",
-  {
   "engines": {
     "node": "22.x"
   },
