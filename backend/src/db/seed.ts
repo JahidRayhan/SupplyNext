@@ -13,10 +13,13 @@ import {
 } from "../data/mockData";
 
 export async function runMigrations(): Promise<void> {
-  const schema = readFileSync(join(__dirname, "schema.sql"), "utf-8");
+  const schema = readFileSync(
+    join(process.cwd(), "src", "db", "schema.sql"),
+    "utf8"
+  );
+
   await pool.query(schema);
 }
-
 // only seeds if products table is empty, so restarts don't wipe real data
 export async function seedIfEmpty(): Promise<void> {
   const { rows } = await pool.query("SELECT count(*)::int AS n FROM products");
