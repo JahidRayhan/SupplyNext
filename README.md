@@ -1,81 +1,174 @@
-# SupplyNext SDCIP — Release 2
+# SDCIP — Supply Chain Digital Intelligence Platform
 
-My Release 2 build of the SDCIP pilot from the SRS. Release 1 covered demand forecasting, inventory analytics, and a role-based dashboard for the Smart Fan product line. Release 2 adds login/RBAC, Postgres persistence, and logistics/IoT tracking.
+A full-stack demand forecasting, inventory, and logistics platform for a
+fictional consumer-electronics manufacturer ("SupplyNext"), built end-to-end
+from a Software Requirements Specification: role-based dashboards, forecasting
+with planner overrides, multi-warehouse inventory, and shipment/IoT tracking
+with a device simulator.
 
-**Stack:** Node/TypeScript/Express backend, Postgres (raw SQL via `pg`, no ORM), React/TypeScript/Vite frontend, Recharts, JWT auth (`jsonwebtoken` + `bcryptjs`).
+Built it to practice the part of a real product build that's easy to skip in
+portfolio projects — actual auth with per-route role authorization, a real
+Postgres schema instead of mock arrays, tests, and CI — not just a UI over a
+to-do list.
 
-## Setup
+Node.js/TypeScript + Express + PostgreSQL on the backend, React + TypeScript +
+Vite on the frontend.
 
-Needs Postgres running locally:
+[![CI](https://github.com/<your-username>/sdcip/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/sdcip/actions)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Vitest](https://img.shields.io/badge/Tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white)
 
+**📸 Screenshots:** _add a screenshot or short GIF of the dashboard here_
+
+---
+
+## Key features
+
+**Demand forecasting** — trailing-mean model with confidence bands per SKU,
+flags forecasts with high uncertainty, and lets planners override a forecast
+with a mandatory documented reason (logged for future retraining).
+
+**Multi-warehouse inventory** — live stock ledger across a factory and three
+warehouses, auto-computed reorder points and safety stock derived from
+forecast demand and lead time, over/understock detection with transfer
+recommendations, and cycle-count reconciliation with automatic variance
+flagging.
+
+**Role-based dashboards** — six roles (Sales Planner, Production Manager,
+Warehouse Manager, Logistics Coordinator, Executive, Admin), each seeing a
+different KPI set computed live from the same underlying data, with
+route-level authorization enforcing who can view or act on what.
+
+**Logistics & IoT tracking** — shipment lifecycle (`pending → in_transit →
+delivered/delayed`), an event log for RFID/GPS/condition sensor data, and an
+included **device simulator** that posts realistic events against the live
+API so the dashboard shows shipments actually moving and arriving in near
+real time.
+
+**Auth done properly** — JWT sessions, bcrypt-hashed passwords, per-route
+role authorization (not just hidden UI buttons), and rate limiting on login.
+
+## Tech stack
+
+| Layer | Choices |
+|---|---|
+| Backend | Node.js, TypeScript, Express, raw SQL via `pg` (no ORM) |
+| Database | PostgreSQL |
+| Frontend | React, TypeScript, Vite, Recharts |
+| Auth | JWT (`jsonwebtoken`), `bcryptjs`, `zod` request validation, `express-rate-limit` |
+| Testing | Vitest + Supertest, 16 tests (unit + integration) against a real Postgres test DB |
+| CI/CD | GitHub Actions (typecheck, build, test on every push) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Client
+        FE["React + Vite<br/>frontend"]
+    end
+    subgraph Server
+        API["Express API<br/>JWT auth · RBAC · zod validation"]
+        SVC["Services<br/>forecasting · inventory · shipments · IoT"]
+    end
+    DB[("PostgreSQL")]
+    SIM["IoT simulator<br/>(standalone script)"]
+
+    FE <-- "REST + JWT" --> API
+    API --> SVC
+    SVC <--> DB
+    SIM -- "posts sensor events" --> API
 ```
+
+## Running it locally
+
+**Prerequisites:** Node.js 18+, PostgreSQL
+
+```bash
+# 1. Database
 sudo apt-get install postgresql
 sudo service postgresql start
 sudo -u postgres psql -c "CREATE USER sdcip WITH PASSWORD 'sdcip_dev_pw' CREATEDB;"
 sudo -u postgres psql -c "CREATE DATABASE sdcip OWNER sdcip;"
-```
 
-The backend connects via `PGHOST`/`PGPORT`/`PGDATABASE`/`PGUSER`/`PGPASSWORD` (or `DATABASE_URL`), defaulting to the values above. It runs the schema and seeds mock data automatically on first boot.
-
-## Running it
-
-**Backend**
-```
+# 2. Backend  (terminal 1)
 cd backend
-cp -n .env.example .env
+cp -n .env.example .env   # -n: won't clobber an existing .env
 npm install
-npm run dev              # http://localhost:4000
-```
+npm run dev                # http://localhost:4000 — migrates + seeds automatically
 
-**Frontend** (separate terminal)
-```
+# 3. Frontend  (terminal 2)
 cd frontend
 npm install
-npm run dev               # http://localhost:5173
+npm run dev                # http://localhost:5173
+
+# 4. (optional) IoT simulator, so the Logistics tab shows live movement  (terminal 3)
+cd backend
+npm run simulate
 ```
 
-Health check: `GET http://localhost:4000/health`
-
-**IoT simulator** (optional, for the Logistics tab): `npm run simulate` from `backend/`. It fakes RFID scans and GPS pings so shipments move through their statuses automatically. Leave the Logistics tab open — it polls every 4s.
-
-## Logging in
-
-Log in via `POST /api/v1/auth/login` (or the login page). All demo accounts share the password `SDCIP-Pilot-2026`:
+Log in with any seeded account — password is the same for all of them:
 
 | Email | Role |
 |---|---|
-| nusrat.jahan@supplynext.com | Sales & Demand Planner |
-| kamrul.hasan@supplynext.com | Production Manager |
-| farzana.akter@supplynext.com | Warehouse Manager |
-| rafiqul.islam@supplynext.com | Logistics Coordinator |
-| tanvir.ahmed@supplynext.com | Executive |
-| admin@supplynext.com | Admin |
+| `tanvir.ahmed@supplynext.com` | Executive |
+| `nusrat.jahan@supplynext.com` | Sales & Demand Planner |
+| `kamrul.hasan@supplynext.com` | Production Manager |
+| `farzana.akter@supplynext.com` | Warehouse Manager |
+| `rafiqul.islam@supplynext.com` | Logistics Coordinator |
+| `admin@supplynext.com` | Admin |
 
-Write actions are restricted by role (e.g. only a Sales Planner or Admin can override a forecast) — see the route files for the exact permissions per endpoint.
+Password: `SDCIP-Pilot-2026`
 
-## Key features (SRS §4 mapping)
+## Testing & CI
 
-- **Forecasting** — FR-DF-02/03: weekly + monthly demand forecast per SKU with confidence bands. FR-DF-04: planner override with mandatory reason. FR-DF-05: recompute endpoint.
-- **Inventory** — FR-IM-01: live stock ledger across 1 factory + 3 warehouses. FR-IM-02: reorder point + safety stock. FR-IM-03: transfer recommendations. FR-IM-04: cycle-count reconciliation. FR-IM-05: audit trail.
-- **Dashboard** — FR-DB-01/02: role-specific KPIs.
-- **Logistics & IoT** — FR-LG-01/02: shipment creation and status tracking (`pending → in_transit → delivered/delayed`), with IoT events auto-advancing shipment status and feeding on-time delivery %.
-
-Mock data: 4 Smart Fan SKUs with ~120 days of synthetic sales history, seeded deterministically so numbers stay stable across restarts.
-
-## Testing
-
-```
+```bash
 cd backend
 sudo -u postgres psql -c "CREATE DATABASE sdcip_test OWNER sdcip;"   # once
 npm test
 ```
 
-16 tests total: unit tests on the forecast logic, plus integration tests (supertest) covering login, auth, and validation. Runs in CI on every push (`.github/workflows/ci.yml`).
+16 tests against a real (isolated) Postgres instance: unit tests on the
+forecasting math, plus integration tests through the actual HTTP layer
+covering login, request validation, and role-based authorization (e.g.
+asserting a warehouse manager gets a 403 trying to override a forecast, and a
+planner gets a 403 trying to reconcile stock). GitHub Actions runs the same
+suite, with a Postgres service container, on every push.
 
-## Known limitations
+## Deployed at
 
-This is a pilot, not a production system:
-- No real IoT device fleet (the simulator stands in for one).
-- No refresh tokens/session revocation — a single 8h JWT.
-- Forecast model is a simple trailing-mean, not a trained ML model.
-- No DB migration tooling, structured logging, or admin UI for managing users.
+- **Frontend:** _Netlify — add your URL here_
+- **Backend API:** _Render — add your URL here_
+- **Database:** _Neon (PostgreSQL)_
+
+## Project structure
+
+```
+.
+├── backend
+│   ├── src
+│   │   ├── data
+│   │   ├── db
+│   │   ├── middleware
+│   │   ├── routes
+│   │   ├── scripts
+│   │   ├── services
+│   │   └── types
+│   └── tests
+│       ├── integration
+│       └── unit
+└── frontend
+    ├── public
+    └── src
+        ├── api
+        ├── assets
+        ├── components
+        ├── pages
+        └── types
+```
+
+---
+
+Built by **[Your Name]** — [LinkedIn](#) · [Portfolio](#) · [Email](#)
