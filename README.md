@@ -21,7 +21,6 @@ Vite on the frontend.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white)
 
-**📸 Screenshots:** _add a screenshot or short GIF of the dashboard here_
 
 ---
 
@@ -139,8 +138,8 @@ suite, with a Postgres service container, on every push.
 
 ## Deployed at
 
-- **Frontend:** _Netlify — add your URL here_
-- **Backend API:** _Render — add your URL here_
+- **Frontend:** _Netlify — [here](https://supply-next.netlify.app/)
+- **Backend API:** _Render — [here](https://supplynext.onrender.com]
 - **Database:** _Neon (PostgreSQL)_
 
 ## Project structure
