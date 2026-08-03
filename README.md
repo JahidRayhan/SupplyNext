@@ -169,5 +169,3 @@ suite, with a Postgres service container, on every push.
 ```
 
 ---
-
-Built by **[Your Name]** — [LinkedIn](#) · [Portfolio](#) · [Email](#)
