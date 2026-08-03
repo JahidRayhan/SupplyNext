@@ -139,7 +139,7 @@ suite, with a Postgres service container, on every push.
 ## Deployed at
 
 - **Frontend:** _Netlify — [here](https://supply-next.netlify.app/)
-- **Backend API:** _Render — [here](https://supplynext.onrender.com]
+- **Backend API:** _Render — [here](https://supplynext.onrender.com)
 - **Database:** _Neon (PostgreSQL)_
 
 ## Project structure
