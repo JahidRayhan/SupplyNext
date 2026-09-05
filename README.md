@@ -11,6 +11,8 @@ portfolio projects — actual auth with per-route role authorization, a real
 Postgres schema instead of mock arrays, tests, and CI — not just a UI over a
 to-do list.
 
+#URL: [https://supply-next.netlify.app/]
+
 Node.js/TypeScript + Express + PostgreSQL on the backend, React + TypeScript +
 Vite on the frontend.
 
@@ -138,8 +140,8 @@ suite, with a Postgres service container, on every push.
 
 ## Deployed at
 
-- **Frontend:** _Netlify — [here](https://supply-next.netlify.app/)
-- **Backend API:** _Render — [here](https://supplynext.onrender.com)
+- **Frontend:** _Netlify
+- **Backend API:** _Render
 - **Database:** _Neon (PostgreSQL)_
 
 ## Project structure
